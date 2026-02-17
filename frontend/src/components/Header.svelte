@@ -1,45 +1,44 @@
 <script>
   import "./header.css";
   import { onMount } from "svelte";
+  import { api } from "$lib/api";
   import {
-    User,
+    UserCircle,
     Settings,
     HelpCircle,
     LogOut,
     ChevronDown,
     Search,
-    Bell,
-    MessageSquare,
-    Home,
-    UserCircle,
-    Mail,
-    CheckCheck,
   } from "lucide-svelte";
 
   export let title = "Dashboard";
-  export let user = {
-    name: "John Doe",
-    email: "john.doe@company.com",
-    avatar: "JD",
-    role: "Administrator",
-    department: "IT",
-  };
-  export let notifications = [
-    { id: 1, text: "New message from Alice", read: false, time: "5m ago" },
-    {
-      id: 2,
-      text: "Project deadline tomorrow",
-      read: false,
-      time: "1h ago",
-    },
-    { id: 3, text: "Meeting at 3 PM", read: true, time: "2h ago" },
-  ];
-
+  let user = null;
+  let notifications = [];
   let showUserMenu = false;
   let showNotifications = false;
-  let unreadCount = notifications.filter((n) => !n.read).length;
+  let unreadCount = 0;
 
-  // Close dropdowns when clicking outside
+  onMount(async () => {
+    try {
+      const res = await api.get("/current_user"); // route Flask JWT
+      user = res.data;
+
+      notifications = [
+        { id: 1, text: "New message from Alice", read: false, time: "5m ago" },
+        {
+          id: 2,
+          text: "Project deadline tomorrow",
+          read: false,
+          time: "1h ago",
+        },
+        { id: 3, text: "Meeting at 3 PM", read: true, time: "2h ago" },
+      ];
+      unreadCount = notifications.filter((n) => !n.read).length;
+    } catch (err) {
+      console.error("Failed to fetch user:", err.response?.data || err);
+    }
+  });
+
   function handleClickOutside(event) {
     if (
       !event.target.closest(".user-menu") &&
@@ -80,7 +79,9 @@
     <div class="flex items-center gap-3">
       <!-- Search Bar -->
       <div class="relative group">
-        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition-colors">
+        <span
+          class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition-colors"
+        >
           <Search size={18} />
         </span>
         <input
@@ -111,25 +112,42 @@
             <div
               class="w-8 h-8 bg-gradient-to-br from-orange-400 to-orange-600 rounded-lg flex items-center justify-center text-white font-medium text-sm"
             >
-              {user.avatar ||
-                user.name
+              {#if user?.avatar}
+                <img
+                  src={user.avatar}
+                  alt="avatar"
+                  class="w-8 h-8 h-full rounded-lg"
+                />
+              {:else if user?.name}
+                {user.name
                   .split(" ")
                   .map((n) => n[0])
                   .join("")}
+              {:else}
+                JD
+              {/if}
             </div>
+
             <div class="hidden md:block text-left">
               <p class="text-sm font-medium text-gray-900">
-                {user.name}
+                {user?.email || "Guest"}
               </p>
-              <p class="text-xs text-gray-500">{user.role}</p>
+              <p class="text-xs text-gray-500">{user?.role || ""}</p>
             </div>
           </div>
-          <ChevronDown size={16} class="text-gray-400 transition-transform {showUserMenu ? 'rotate-180' : ''}"/>
+          <ChevronDown
+            size={16}
+            class="text-gray-400 transition-transform {showUserMenu
+              ? 'rotate-180'
+              : ''}"
+          />
         </button>
 
         <!-- User Dropdown Menu -->
         {#if showUserMenu}
-          <div class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+          <div
+            class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
+          >
             <!-- User Info -->
             <div class="px-4 py-3 border-b border-gray-100">
               <p class="text-sm font-medium text-gray-900">
@@ -144,24 +162,34 @@
             </div>
 
             <!-- Menu Items -->
-            <a href="/profile" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+            <a
+              href="/profile"
+              class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
               <UserCircle size={16} class="text-gray-500" />
               Profile
             </a>
 
-            <a href="/settings" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+            <a
+              href="/settings"
+              class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
               <Settings size={16} class="text-gray-500" />
               Settings
             </a>
 
-            <a href="/help" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+            <a
+              href="/help"
+              class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
               <HelpCircle size={16} class="text-gray-500" />
               Help & Support
             </a>
 
             <hr class="my-1 border-gray-200" />
 
-            <button class="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+            <button
+              class="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
               on:click={() => console.log("Logout")}
             >
               <LogOut size={16} />

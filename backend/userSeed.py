@@ -1,21 +1,14 @@
 from app import app
-from models.userModel import db, User
+from models.userModel import db, User, UserRole
 
-def seed_user():
-    with app.app_context():
+with app.app_context():
+    user = User(name="Rifqi", email="rifqi@gmail.com", role=UserRole.ADMIN)
+    user.set_password("password123")
 
-        existing_user = User.query.filter_by(email="admin@gmail.com").first()
-        if existing_user:
-            print("User already exists.")
-            return
+    admin = User(name="Keisya", email="keisya@gmail.com", role=UserRole.USER)
+    admin.set_password("password123")
 
-        user = User(email="admin@gmail.com")
-        user.set_password("admin123")
-
-        db.session.add(user)
-        db.session.commit()
-
-        print("Admin user created successfully.")
-
-if __name__ == "__main__":
-    seed_user()
+    db.session.add(admin)
+    db.session.add(user)
+    db.session.commit()
+    print("Users seeded successfully!")

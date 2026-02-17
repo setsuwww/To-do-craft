@@ -12,7 +12,7 @@
     }
 
     try {
-      const res = await api.get('/dashboard');  // token otomatis dikirim
+      const res = await api.get('/dashboard');
       message = res.data.message;
     } catch (err) {
       console.error("DEBUG: error =", err.response?.data || err);

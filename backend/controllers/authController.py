@@ -1,3 +1,4 @@
+# authController.py
 from flask import request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from models.userModel import User
@@ -14,18 +15,30 @@ def login_user():
     if not user or not user.check_password(password):
         return jsonify({"error": "Invalid credentials"}), 401
 
+    # PENTING: identity harus string
     access_token = create_access_token(identity=str(user.id))
-    return jsonify({"access_token": access_token})
+    return jsonify({"access_token": access_token}), 200
 
 @jwt_required()
 def dashboard():
     current_user_id = get_jwt_identity()
-    print("DEBUG: current_user_id =", current_user_id)
-    if not current_user_id:
-        return jsonify({"error": "JWT token invalid or missing"}), 422
-
     user = User.query.get(current_user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    return jsonify({"message": f"Hello {user.email}, welcome to your dashboard"})
+    return jsonify({"message": f"Hello {user.email}, welcome to your dashboard"}), 200
+
+@jwt_required()
+def get_current_user():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    return jsonify({
+        "id": user.id,
+        "email": user.email,
+        "name": getattr(user, "name", ""),
+        "avatar": getattr(user, "avatar", ""),
+    }), 200
