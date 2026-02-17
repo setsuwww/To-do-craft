@@ -1,19 +1,8 @@
-<script>
-  import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';
+<script context="module" lang="ts">
+  import { redirect } from '@sveltejs/kit';
 
-  let token = null;
-
-  onMount(() => {
-    token = localStorage.getItem('token');
-    if (!token) goto('/login');
-  });
+  export function load() {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null;
+    if (!token) throw redirect(307, '/login');
+  }
 </script>
-
-<main class="min-h-screen flex flex-col items-center justify-center bg-orange-100 p-6">
-  <h1 class="text-3xl font-bold mb-4 text-gray-800">Welcome!</h1>
-  <p class="text-gray-600 mb-6">You are logged in.</p>
-  <a href="/logout" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl transition">
-    Logout
-  </a>
-</main>

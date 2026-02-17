@@ -1,50 +1,86 @@
 <script>
   import { goto } from '$app/navigation';
+  import { api } from '$lib/api';
+
   let email = '';
   let password = '';
   let error = '';
 
   async function handleLogin() {
     error = '';
-    const res = await fetch('http://localhost:5000/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
+    try {
+      const res = await api.post('/login', { email, password });
+      const data = res.data;
 
-    const data = await res.json();
+      // Simpan token di localStorage
+      localStorage.setItem('access_token', data.access_token);
 
-    if (!res.ok) {
-      error = data.error;
-      return;
+      // Redirect ke dashboard
+      goto('/dashboard');
+    } catch (err) {
+      if (err.response) {
+        error = err.response.data.error || 'Login failed';
+      } else {
+        error = 'Network error';
+      }
     }
-
-    localStorage.setItem('token', data.access_token);
-    goto('/');
   }
 </script>
 
 <div class="min-h-screen flex items-center justify-center bg-orange-100 p-6">
-  <form class="bg-white p-8 rounded-2xl shadow-xl space-y-5 w-full max-w-md" on:submit|preventDefault={handleLogin}>
-    <h1 class="text-2xl font-semibold text-center text-gray-800">Login</h1>
+  <form
+    class="bg-white p-8 rounded-lg shadow-2xl space-y-5 w-full max-w-sm border-4 border-black"
+    on:submit|preventDefault={handleLogin}
+  >
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-4 font-mono">Login</h1>
 
-    <input bind:value={email} type="email" placeholder="Email" class="w-full p-3 border rounded" required />
-    <input bind:value={password} type="password" placeholder="Password" class="w-full p-3 border rounded" required />
+    <!-- Email -->
+    <div class="flex flex-col gap-1">
+      <label for="email" class="font-mono font-semibold text-gray-700">Email</label>
+      <input
+        id="email"
+        type="email"
+        bind:value={email}
+        placeholder="you@email.com"
+        required
+        class="border-2 border-black px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-black font-mono"
+      />
+    </div>
 
-    <label class="flex items-center gap-2">
-      <input type="checkbox" class="accent-orange-500" /> Remember me
+    <!-- Password -->
+    <div class="flex flex-col gap-1">
+      <label for="password" class="font-mono font-semibold text-gray-700">Password</label>
+      <input
+        id="password"
+        type="password"
+        bind:value={password}
+        placeholder="••••••••"
+        required
+        class="border-2 border-black px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-black font-mono"
+      />
+    </div>
+
+    <!-- Remember Me -->
+    <label class="flex items-center gap-2 cursor-pointer font-mono">
+      <input type="checkbox" class="accent-orange-500 w-4 h-4" />
+      Remember me
     </label>
 
-    <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white p-3 rounded">
+    <!-- Submit Button -->
+    <button
+      type="submit"
+      class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-lg border-2 border-black shadow-md font-mono transition"
+    >
       Login
     </button>
 
     {#if error}
-      <p class="text-red-500 text-center">{error}</p>
+      <p class="text-red-600 text-center font-mono">{error}</p>
     {/if}
 
-    <p class="text-center text-sm">
-      Belum punya akun? <a href="/register" class="text-orange-500 hover:underline">Register</a>
+    <p class="text-center font-mono text-sm">
+      Belum punya akun?
+      <a href="/register" class="text-orange-600 font-bold hover:underline">Register</a>
     </p>
   </form>
 </div>
