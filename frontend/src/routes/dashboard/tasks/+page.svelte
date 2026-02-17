@@ -56,8 +56,7 @@
 
 <!-- Search & Filter -->
 <SearchEngine
-  {search}
-  {statusFilter}
+  {search} {statusFilter}
   onSearchChange={(s) => { search = s; loadTasks(); }}
   onStatusChange={(s) => { statusFilter = s; loadTasks(); }}
 />

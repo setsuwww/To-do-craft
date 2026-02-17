@@ -35,7 +35,6 @@
 </script>
 
 <aside class="bg-white h-screen flex flex-col transition-all duration-300 border-r border-gray-200 {isCollapsed ? 'w-20' : 'w-64'}">
-  <!-- Header -->
   <div class="flex items-center h-16 px-4 border-b border-gray-200">
     <div class="flex items-center gap-2 flex-1">
       {#if !isCollapsed}

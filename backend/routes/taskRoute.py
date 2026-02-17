@@ -1,5 +1,4 @@
 from flask import Blueprint
-
 from controllers.taskController import (
     get_tasks,
     create_task,

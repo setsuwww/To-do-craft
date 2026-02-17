@@ -41,12 +41,7 @@
             title="Analytics Dashboard"
             user={currentUser}
             notifications={[
-                {
-                    id: 1,
-                    text: "New comment on your post",
-                    read: false,
-                    time: "2m ago",
-                },
+                { id: 1, text: "New comment on your post", read: false, time: "2m ago",},
                 { id: 2, text: "Meeting reminder", read: true, time: "1h ago" },
             ]}
         />

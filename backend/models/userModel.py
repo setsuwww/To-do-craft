@@ -15,7 +15,7 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     role = db.Column(db.Enum(UserRole), default=UserRole.USER)  # <-- baru
 
-    # simpan password dengan hash
+    # hash password
     def set_password(self, plain_password):
         self.password = generate_password_hash(plain_password)
 

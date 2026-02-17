@@ -20,7 +20,7 @@
 
   onMount(async () => {
     try {
-      const res = await api.get("/current_user"); // route Flask JWT
+      const res = await api.get("/current_user");
       user = res.data;
 
       notifications = [
