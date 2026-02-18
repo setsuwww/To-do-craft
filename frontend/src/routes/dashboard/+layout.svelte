@@ -3,24 +3,25 @@
     import Sidebar from "../../components/Sidebar.svelte";
     import Header from "../../components/Header.svelte";
 
-    let isSidebarCollapsed = false;
+    import {
+        LayoutDashboard,
+        Layout,
+        Calendar,
+        ListTodo,
+        Tag,
+        History,
+    } from "lucide-svelte";
 
     const menuItems = [
-        { name: "Dashboard", href: "/dashboard" },
-        { name: "Boards", href: "/boards" },
-        { name: "Schedules", href: "/schedules" },
-        { name: "Tasks", href: "/tasks" },
-        { name: "Categories", href: "/categories" },
-        { name: "Histories", href: "/histories" },
+        { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+        { name: "Tasks", href: "/dashboard/tasks", icon: ListTodo },
+        { name: "Boards", href: "/dashboard/boards", icon: Layout },
+        { name: "Categories", href: "/dashboard/categories", icon: Tag },
+        { name: "Schedules", href: "/dashboard/schedules", icon: Calendar },
+        { name: "Histories", href: "/dashboard/histories", icon: History },
     ];
 
-    let currentUser = {
-        name: "Mbud",
-        email: "mbud@jembut.com",
-        avatar: "M",
-        role: "Product Manager",
-        department: "Product",
-    };
+    let isSidebarCollapsed = false;
 
     const toggleSidebar = () => {
         isSidebarCollapsed = !isSidebarCollapsed;
@@ -28,23 +29,14 @@
 </script>
 
 <div class="flex min-h-screen">
-    <!-- Sidebar -->
     <Sidebar
         isCollapsed={isSidebarCollapsed}
         onToggle={toggleSidebar}
         items={menuItems}
     />
 
-    <!-- Main Content -->
     <div class="flex-1 flex flex-col">
-        <Header
-            title="Analytics Dashboard"
-            user={currentUser}
-            notifications={[
-                { id: 1, text: "New comment on your post", read: false, time: "2m ago",},
-                { id: 2, text: "Meeting reminder", read: true, time: "1h ago" },
-            ]}
-        />
+        <Header title="Dashboard"/>
 
         <main class="flex-1 bg-gray-100 p-6">
             <slot />

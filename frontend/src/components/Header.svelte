@@ -13,58 +13,16 @@
 
   export let title = "Dashboard";
   let user = null;
-  let notifications = [];
   let showUserMenu = false;
-  let showNotifications = false;
-  let unreadCount = 0;
 
   onMount(async () => {
     try {
       const res = await api.get("/current_user");
       user = res.data;
-
-      notifications = [
-        { id: 1, text: "New message from Alice", read: false, time: "5m ago" },
-        {
-          id: 2,
-          text: "Project deadline tomorrow",
-          read: false,
-          time: "1h ago",
-        },
-        { id: 3, text: "Meeting at 3 PM", read: true, time: "2h ago" },
-      ];
-      unreadCount = notifications.filter((n) => !n.read).length;
     } catch (err) {
       console.error("Failed to fetch user:", err.response?.data || err);
     }
   });
-
-  function handleClickOutside(event) {
-    if (
-      !event.target.closest(".user-menu") &&
-      !event.target.closest(".notifications-menu")
-    ) {
-      showUserMenu = false;
-      showNotifications = false;
-    }
-  }
-
-  onMount(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  });
-
-  function markAsRead(id) {
-    notifications = notifications.map((n) =>
-      n.id === id ? { ...n, read: true } : n,
-    );
-    unreadCount = notifications.filter((n) => !n.read).length;
-  }
-
-  function markAllAsRead() {
-    notifications = notifications.map((n) => ({ ...n, read: true }));
-    unreadCount = 0;
-  }
 </script>
 
 <header
@@ -79,20 +37,14 @@
     <div class="flex items-center gap-3">
       <!-- Search Bar -->
       <div class="relative group">
-        <span
-          class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition-colors"
-        >
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition-colors">
           <Search size={18} />
         </span>
-        <input
-          type="text"
-          placeholder="Search..."
+        <input type="text" placeholder="Search..."
           class="w-80 pl-10 pr-12 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 transition-all"
           aria-label="Search"
         />
-        <span
-          class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded"
-        >
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
           ⌘K
         </span>
       </div>
@@ -103,36 +55,19 @@
           class="flex items-center gap-3 pl-3 pr-2 py-1.5 rounded-lg hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200"
           on:click={() => {
             showUserMenu = !showUserMenu;
-            showNotifications = false;
           }}
           aria-expanded={showUserMenu}
           aria-haspopup="true"
         >
           <div class="flex items-center gap-3">
-            <div
-              class="w-8 h-8 bg-gradient-to-br from-orange-400 to-orange-600 rounded-lg flex items-center justify-center text-white font-medium text-sm"
-            >
+            <div class="w-8 h-8 bg-gradient-to-br from-orange-400 to-orange-600 rounded-lg flex items-center justify-center text-white font-medium text-sm">
               {#if user?.avatar}
-                <img
-                  src={user.avatar}
-                  alt="avatar"
-                  class="w-8 h-8 h-full rounded-lg"
-                />
+                <img src={user.avatar} alt="avatar" class="w-8 h-8 h-full rounded-lg"/>
               {:else if user?.name}
-                {user.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
+                {user.name.split(" ").map((n) => n[0]).join("")}
               {:else}
-                JD
+                U
               {/if}
-            </div>
-
-            <div class="hidden md:block text-left">
-              <p class="text-sm font-medium text-gray-900">
-                {user?.email || "Guest"}
-              </p>
-              <p class="text-xs text-gray-500">{user?.role || ""}</p>
             </div>
           </div>
           <ChevronDown
@@ -145,10 +80,7 @@
 
         <!-- User Dropdown Menu -->
         {#if showUserMenu}
-          <div
-            class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
-          >
-            <!-- User Info -->
+          <div class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
             <div class="px-4 py-3 border-b border-gray-100">
               <p class="text-sm font-medium text-gray-900">
                 {user.name}
@@ -161,37 +93,24 @@
               </p>
             </div>
 
-            <!-- Menu Items -->
-            <a
-              href="/profile"
-              class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-            >
+            <a href="/profile" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
               <UserCircle size={16} class="text-gray-500" />
               Profile
             </a>
 
-            <a
-              href="/settings"
-              class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-            >
+            <a href="/settings" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
               <Settings size={16} class="text-gray-500" />
               Settings
             </a>
 
-            <a
-              href="/help"
-              class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-            >
+            <a href="/help" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
               <HelpCircle size={16} class="text-gray-500" />
               Help & Support
             </a>
 
             <hr class="my-1 border-gray-200" />
 
-            <button
-              class="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-              on:click={() => console.log("Logout")}
-            >
+            <button class="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors" on:click={() => console.log("Logout")}>
               <LogOut size={16} />
               Logout
             </button>
@@ -202,7 +121,6 @@
   </div>
 </header>
 
-<!-- Add margin top to main content to account for fixed header -->
 <style>
   :global(main) {
     margin-top: 4rem;
