@@ -10,6 +10,7 @@
     ChevronDown,
     Search,
   } from "lucide-svelte";
+    import { goto } from "$app/navigation";
 
   export let title = "Dashboard";
   let user = null;
@@ -110,7 +111,7 @@
 
             <hr class="my-1 border-gray-200" />
 
-            <button class="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors" on:click={() => console.log("Logout")}>
+            <button class="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors" on:click={() => goto('/login')}>
               <LogOut size={16} />
               Logout
             </button>
