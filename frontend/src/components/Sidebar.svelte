@@ -71,7 +71,7 @@
           {isCollapsed ? 'justify-center' : ''}"
         title={isCollapsed ? item.name : ""}
       >
-        <div class={isActive(item.href) ? "p-1 bg-gradient-to-b from-orange-500 to-orange-300 rounded-md" : "p-1 bg-orange-100 text-orange-700 rounded-md"}>
+        <div class={isActive(item.href) ? "p-1 bg-gradient-to-b from-orange-500 to-orange-400 rounded-md" : "p-1 bg-orange-100 text-orange-700 rounded-md"}>
           <item.icon
             size={20}
             class={isActive(item.href)
