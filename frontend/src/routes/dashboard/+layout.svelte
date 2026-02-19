@@ -6,7 +6,7 @@
     import {
         LayoutDashboard,
         Layout,
-        Calendar,
+        CalendarDays,
         ListTodo,
         Tag,
         History,
@@ -17,7 +17,7 @@
         { name: "Tasks", href: "/dashboard/tasks", icon: ListTodo },
         { name: "Boards", href: "/dashboard/boards", icon: Layout },
         { name: "Categories", href: "/dashboard/categories", icon: Tag },
-        { name: "Schedules", href: "/dashboard/schedules", icon: Calendar },
+        { name: "Schedules", href: "/dashboard/schedules", icon: CalendarDays },
         { name: "Histories", href: "/dashboard/histories", icon: History },
     ];
 
@@ -28,24 +28,27 @@
     };
 </script>
 
-<div class="flex min-h-screen">
+<div class="flex min-h-screen bg-gray-100">
+    <!-- Sidebar dengan jarak dari tepi -->
     <Sidebar
         isCollapsed={isSidebarCollapsed}
         onToggle={toggleSidebar}
         items={menuItems}
     />
 
-    <div class="flex-1 flex flex-col">
-        <Header title="Dashboard"/>
-
-        <main class="flex-1 bg-gray-100 p-6">
+    <!-- Main Content - sejajar dengan sidebar -->
+    <main class="transition-all duration-300 flex-1 p-4">
+        <div class="bg-gray-200/60 rounded-2xl border border-gray-200 shadow-sm p-4">
             <slot />
-        </main>
-    </div>
+        </div>
+    </main>
 </div>
 
 <style>
+    /* Smooth transition for main content margin */
     main {
-        min-height: calc(100vh - 64px); /* jika header tinggi 16 h = 64px */
+        transition-property: margin-left;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 300ms;
     }
 </style>

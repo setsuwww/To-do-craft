@@ -1,5 +1,7 @@
 <script>
   import { page } from "$app/stores";
+  import { onMount } from "svelte";
+  import { api } from "$lib/api";
 
   export let items = [];
   export let isCollapsed = false;
@@ -8,12 +10,22 @@
   import { LogOut, ChevronLeft, ChevronRight, User } from "lucide-svelte";
 
   const isActive = (href) => $page.url.pathname === href;
+
+  onMount(async () => {
+    try {
+      const res = await api.get("/current_user");
+      user = res.data;
+    } catch (err) {
+      console.error("Failed to fetch user:", err.response?.data || err);
+    }
+  });
 </script>
 
 <aside
-  class="bg-white h-screen flex flex-col transition-all duration-300 border-r border-gray-200 {isCollapsed
-    ? 'w-20'
-    : 'w-64'}"
+  class="bg-white flex flex-col transition-all duration-300
+       border border-gray-200 rounded-2xl shadow-sm ml-2
+       h-[calc(100vh-1rem)] sticky top-2
+       {isCollapsed ? 'w-20' : 'w-64'}"
 >
   <div class="flex items-center h-16 px-4 border-b border-gray-200">
     <div class="flex items-center gap-2 flex-1">
@@ -21,14 +33,14 @@
         <div
           class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center"
         >
-          <span class="text-white font-bold text-lg">A</span>
+          <span class="text-white font-bold text-lg">T</span>
         </div>
-        <span class="font-semibold text-gray-900">AppName</span>
+        <span class="font-semibold text-gray-900">Todocraft</span>
       {:else}
         <div
           class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center mx-auto"
         >
-          <span class="text-white font-bold text-lg">A</span>
+          <span class="text-white font-bold text-lg">T</span>
         </div>
       {/if}
     </div>
@@ -49,22 +61,23 @@
   <!-- Navigation -->
   <nav class="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
     {#each items as item}
-      {@const IconComponent = item.icon}
       <a
         href={item.href}
         class="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors group
-    {isActive(item.href)
-          ? 'bg-orange-50 text-orange-600'
-          : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'}
-    {isCollapsed ? ' justify-center' : ''}"
+          {isActive(item.href)
+          ? 'text-gray-900'
+          : 'text-gray-400 hover:bg-orange-50 hover:text-orange-600'}
+          {isCollapsed ? 'justify-center' : ''}"
         title={isCollapsed ? item.name : ""}
       >
-        <item.icon
-          size={20}
-          class={isActive(item.href)
-            ? "text-orange-600"
-            : "text-gray-500 group-hover:text-orange-600"}
-        />
+        <div class={isActive(item.href) ? "p-1 bg-gradient-to-b from-orange-500 to-orange-300 rounded-md" : "p-1 bg-orange-100 text-orange-700 rounded-md"}>
+          <item.icon
+            size={20}
+            class={isActive(item.href)
+              ? "text-white"
+              : "text-orange-400 group-hover:text-orange-600"}
+          />
+        </div>
         {#if !isCollapsed}
           <span class="flex-1 text-sm">{item.name}</span>
         {/if}

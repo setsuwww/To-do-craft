@@ -16,9 +16,12 @@
 
   <!-- Quick Actions -->
   <div class="bg-white rounded-2xl border border-gray-100 p-6">
-    <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+    <div class="mb-4">
+      <h2 class="text-lg font-semibold text-gray-900">Quick action</h2>
+      <p class="text-sm text-gray-500 mt-1">Simplify your action</p>
+    </div>
 
-    <div class="space-y-3">
+    <div class="space-y-4 mt-10">
       <button class="w-full flex justify-between p-3 bg-orange-50 text-orange-700 rounded-xl"
         on:click={() => goto('/dashboard/tasks')}>
         <span class="flex items-center gap-2">
@@ -56,26 +59,4 @@
       </button>
     </div>
   </div>
-
-  <!-- Recent Activity -->
-  <div class="bg-white rounded-2xl border border-gray-100 p-6">
-    <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
-
-    <div class="space-y-4">
-      {#each recentActivities as activity}
-        <div class="flex items-start gap-3">
-          <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-            <CheckCircle size={16} />
-          </div>
-          <div class="flex-1">
-            <p class="text-sm text-gray-900">{activity.action}</p>
-            <p class="text-xs text-gray-500">
-              {activity.time} • by {activity.user}
-            </p>
-          </div>
-        </div>
-      {/each}
-    </div>
-  </div>
-
 </div>
