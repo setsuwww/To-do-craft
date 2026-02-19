@@ -2,12 +2,13 @@
   import { page } from "$app/stores";
   import { onMount } from "svelte";
   import { api } from "$lib/api";
+  import { LogOut, ChevronLeft, ChevronRight, User } from "lucide-svelte";
 
   export let items = [];
   export let isCollapsed = false;
   export let onToggle = () => {};
 
-  import { LogOut, ChevronLeft, ChevronRight, User } from "lucide-svelte";
+  let user = null;
 
   const isActive = (href) => $page.url.pathname === href;
 
@@ -95,8 +96,8 @@
           <User size={18} class="text-gray-600" />
         </div>
         <div class="flex-1 min-w-0">
-          <p class="text-sm font-medium text-gray-900 truncate">John Doe</p>
-          <p class="text-xs text-gray-500 truncate">john@example.com</p>
+          <p class="text-sm font-medium text-gray-900 truncate">{user?.name}</p>
+          <p class="text-xs text-gray-500 truncate">{user?.email}</p>
         </div>
         <button
           class="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
